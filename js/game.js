@@ -20,8 +20,13 @@
 
         game.cursors = game.input.keyboard.createCursorKeys();
 
+        // Make the world larger than the actual canvas
+        game.world.setBounds(0, 0, 960, 320);
+
         game.createPlatforms();
         game.createPlayer();
+
+        game.camera.follow(game.player);
     };
 
     Game.prototype.update = function() {
