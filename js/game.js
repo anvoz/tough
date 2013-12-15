@@ -16,6 +16,9 @@
 
             game.monsters;
             game.monsterTimer;
+
+            game.rockets;
+            game.rocketTimer;
         };
 
     Game.prototype.preload = function() {
@@ -30,6 +33,8 @@
 
         game.load.spritesheet('player', 'assets/player.png', 32, 32);
         game.load.spritesheet('monster', 'assets/monster.png', 32, 32);
+
+        game.load.image('rocket', 'assets/rocket.png');
     };
 
     Game.prototype.create = function() {
@@ -48,6 +53,10 @@
         game.monsterTimer = setInterval(function() {
             game.createMonster();
         }, 20000);
+        game.createRocket();
+        game.rocketTimer = setInterval(function() {
+            game.createRocket();
+        }, 25000);
 
         game.createPlayer();
 
@@ -58,7 +67,8 @@
         var game = this,
             platforms = game.platforms,
             player = game.player,
-            monsters = game.monsters;
+            monsters = game.monsters,
+            rockets = game.rockets;
 
         game.physics.collide(player, monsters, function(player, monster) {
             monster.frame = 2;
@@ -68,6 +78,9 @@
             if (player.y < monster.y - 30) {
                 monster.kill();
             }
+        }, null, this);
+        game.physics.collide(player, rockets, function(player, rocket) {
+            rocket.body.gravity.y = 12;
         }, null, this);
         game.physics.collide(monsters, monsters);
 
@@ -206,5 +219,20 @@
             monster.body.gravity.y = 12;
             monster.body.velocity.x = -50;
         }
+    };
+
+    Game.prototype.createRocket = function() {
+        var game = this,
+            rockets;
+
+        if (typeof game.rockets === 'undefined') {
+            // Create rocket group
+            rockets = game.rockets = game.add.group()
+        } else {
+            rockets = game.rockets;
+        }
+
+        var rocket = rockets.create(game.width, 60, 'rocket');
+        rocket.body.velocity.x = -100;
     };
 })(window);
