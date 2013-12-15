@@ -51,12 +51,20 @@
         game.createPlatforms();
         game.createMonster();
         game.monsterTimer = setInterval(function() {
-            game.createMonster();
+            if (typeof game.createMonster === 'function') {
+                game.createMonster();
+            } else {
+                clearInterval(game.rocketTimer);
+            }
         }, 20000);
         game.createRocket();
         game.rocketTimer = setInterval(function() {
-            game.createRocket();
-        }, 25000);
+            if (typeof game.createRocket === 'function') {
+                game.createRocket();
+            } else {
+                clearInterval(game.rocketTimer);
+            }
+        }, 10000);
 
         game.createPlayer();
 
