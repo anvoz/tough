@@ -7,8 +7,14 @@
 
             game.ticks = 0;
 
+            game.life;
+            game.lifeText;
+            game.lifeCount = 1;
+
             game.score = 0;
             game.scoreText;
+
+            game.endText;
 
             game.width = 480;
             game.height = 320;
@@ -18,7 +24,6 @@
             game.cursors;
             game.platforms;
             game.player;
-            game.life;
 
             game.monsters;
             game.monsterTimer;
@@ -63,10 +68,17 @@
         game.createPlayer();
         game.camera.follow(game.player);
 
-        var life = game.life = game.add.sprite(360, 5, 'life');
-        game.add.text(400, 5, 'x 1', { fontSize: '32px', fill: '#000' });
+        // TODO: fix font size
+        var life = game.life = game.add.sprite(360, 5, 'life'),
+            lifeText = game.lifeText = game.add.text(400, 5, 'x 1', {
+                fontSize: '32px',
+                fill: '#000'
+            });
 
-        var scoreText = game.scoreText = game.add.text(5, 5, 'Score: 0', { fontSize: '32px', fill: '#000' });
+        var scoreText = game.scoreText = game.add.text(100, 5, 'Score: 0', {
+            fontSize: '32px',
+            fill: '#000'
+        });
         // TODO: fix this
         // scoreText.fixedToCamera = true;
     };
@@ -81,6 +93,9 @@
 
         game.physics.collide(player, life, function() {
             life.body.gravity.y = 12;
+
+            game.lifeCount = 0;
+            game.lifeText.content = 'x 0';
         }, null, true);
 
         game.physics.collide(player, monsters, function(player, monster) {
@@ -109,11 +124,13 @@
         player.action();
 
         game.ticks++;
-        if (game.ticks % 500 == 0) {
-            game.createRocket();
-        }
-        if (game.ticks % 750 == 0) {
-            game.createMonster();
+        if (game.lifeCount !== 0) {
+            if (game.ticks % 500 == 0) {
+                game.createRocket();
+            }
+            if (game.ticks % 750 == 0) {
+                game.createMonster();
+            }
         }
     };
 
@@ -183,13 +200,6 @@
         player.frame = 3;
 
         player.action = function() {
-            if (player.x > game.maxWidth - 40) {
-                player.x = 0;
-            }
-            if (player.y > game.maxHeight - 40) {
-                player.y = 0;
-            }
-
             // Reset the player velocity (movement)
             player.body.velocity.x = 0;
 
@@ -231,6 +241,27 @@
             if (cursors.up.isDown && player.body.touching.down)
             {
                 player.body.velocity.y = -350;
+            }
+            
+            if (player.x > game.maxWidth - 40) {
+                player.x = 0;
+            }
+            if (player.y > game.maxHeight - 40) {
+                player.y = 0;
+            }
+
+            if (game.lifeCount === 0) {
+                player.frame = 6;
+                player.body.velocity.x = 0;
+                player.animations.stop();
+                player.action = function() {};
+
+                if (typeof game.endText === 'undefined') {
+                    game.endText = game.add.text(300, 150, 'You win', {
+                        fontSize: '32px',
+                        fill: '#000'
+                    });
+                }
             }
         };
     };
