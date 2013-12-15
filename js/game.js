@@ -5,6 +5,8 @@
         Game = Tough.Game = function() {
             var game = this;
 
+            game.tick = 0;
+
             game.width = 480;
             game.height = 320;
             game.maxWidth = 2400;
@@ -53,28 +55,12 @@
         game.createSky();
         game.createPlatforms();
         game.createMonster();
-        game.monsterTimer = setInterval(function() {
-            if (typeof game.createMonster === 'function') {
-                game.createMonster();
-            } else {
-                clearInterval(game.rocketTimer);
-            }
-        }, 20000);
         game.createRocket();
-        game.rocketTimer = setInterval(function() {
-            if (typeof game.createRocket === 'function') {
-                game.createRocket();
-            } else {
-                clearInterval(game.rocketTimer);
-            }
-        }, 10000);
 
         game.createPlayer();
         game.camera.follow(game.player);
 
         var life = game.life = game.add.sprite(360, 5, 'life');
-        // TODO: why it doesn't work
-        // life.fixedToCamera = true;
         game.add.text(400, 5, 'x 1', { fontSize: '32px', fill: '#000' });
     };
 
@@ -108,6 +94,14 @@
         game.physics.collide(monsters, platforms);
 
         player.action();
+
+        game.tick++;
+        if (game.tick % 500 == 0) {
+            game.createRocket();
+        }
+        if (game.tick % 750 == 0) {
+            game.createMonster();
+        }
     };
 
     Game.prototype.createSky = function() {
