@@ -88,7 +88,7 @@
             totalGround = game.maxWidth / groundWidth;
         // Create the ground
         for ( ; i < totalGround; i++) {
-            var x = i * groundWidth,
+            var x = i * groundWidth + ((i > 0) ? 150 : 0),
                 ground = platforms.create(x, groundY, 'ground');
             // This stops it from falling away when the character jumps on it
             ground.body.immovable = true;
