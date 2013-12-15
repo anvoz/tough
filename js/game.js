@@ -136,7 +136,7 @@
         player.body.collideWorldBounds = true;
      
         // Walking left and right animations
-        player.animations.add('left', [1, 0, 2, 0], 10, true);
+        player.animations.add('left', [0, 2, 1, 2], 10, true);
         player.animations.add('right', [4, 3, 5, 3], 10, true);
 
         // The player always looks to the right when the game started
