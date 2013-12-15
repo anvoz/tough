@@ -2,16 +2,29 @@
     'use strict';
 
     var Tough = window.Tough = {},
-        Game = Tough.Game = function(game) {
-            this.cursors;
-            this.platforms;
-            this.player;
+        Game = Tough.Game = function() {
+            var game = this;
+
+            game.width = 480;
+            game.height = 320;
+            game.maxWidth = 2400;
+            game.maxHeight = 320;
+
+            game.cursors;
+            game.platforms;
+            game.player;
         };
 
     Game.prototype.preload = function() {
         var game = this;
 
+        game.load.image('sky', 'assets/sky.png');
+        game.load.image('cloud1', 'assets/cloud1.png');
+        game.load.image('cloud2', 'assets/cloud2.png');
+
         game.load.image('ground', 'assets/ground.png');
+        game.load.image('ledge', 'assets/ledge.png');
+
         game.load.spritesheet('player', 'assets/player.png', 32, 32);
     };
 
@@ -21,8 +34,9 @@
         game.cursors = game.input.keyboard.createCursorKeys();
 
         // Make the world larger than the actual canvas
-        game.world.setBounds(0, 0, 960, 320);
+        game.world.setBounds(0, 0, game.maxWidth, game.maxHeight);
 
+        game.createSky();
         game.createPlatforms();
         game.createPlayer();
 
@@ -39,27 +53,51 @@
         player.action();
     };
 
+    Game.prototype.createSky = function() {
+        var game = this,
+
+            sky = game.add.group(),
+            cloud1Y = game.world.height - 188,
+            cloud2Y = game.world.height - 94,
+
+            i = 0,
+            perScreen = game.maxWidth / game.width;
+        for ( ; i < perScreen; i++) {
+            var x = i * game.width;
+
+            sky.create(x, 0, 'sky');
+            if (i % 2 == 0) {
+                sky.create(x, cloud1Y, 'cloud1');
+            } else {
+                sky.create(x, cloud2Y, 'cloud2');
+            }
+        }
+    };
+
     Game.prototype.createPlatforms = function() {
         var game = this,
 
             // The platforms group contains the ground
             // where the character can jump on
             platforms = game.platforms = game.add.group(),
-            // Create the ground
-            ground = platforms.create(0, game.world.height - 30, 'ground'),
-            // Create two ledges
-            ledge1 = platforms.create(0, 100, 'ground'),
-            ledge2 = platforms.create(300, 200, 'ground');
 
-        // Temporarily use scale to draw the 10x10 pixels sprite
-        ground.scale.setTo(48, 3);
-        // This stops it from falling away when the character jumps on it
-        ground.body.immovable = true;
+            groundY = game.world.height - 32,
+            groundWidth = 1200,
 
-        ledge1.scale.setTo(20, 3);
-        ledge1.body.immovable = true;
-        ledge2.scale.setTo(20, 3);
-        ledge2.body.immovable = true;
+            i = 0,
+            totalGround = game.maxWidth / groundWidth;
+        // Create the ground
+        for ( ; i < totalGround; i++) {
+            var x = i * groundWidth,
+                ground = platforms.create(x, groundY, 'ground');
+            // This stops it from falling away when the character jumps on it
+            ground.body.immovable = true;
+
+            var ledge1 = platforms.create(x - 100, game.world.height - 180, 'ledge'),
+                ledge2 = platforms.create(x + 300, game.world.height - 100, 'ledge');
+            ledge1.body.immovable = true;
+            ledge2.body.immovable = true;
+        }
     };
 
     Game.prototype.createPlayer = function() {
@@ -70,7 +108,7 @@
             player = game.player = game.add.sprite(32, game.world.height - 150, 'player');
 
         // Player physics properties
-        player.body.gravity.y = 10;
+        player.body.gravity.y = 12;
         player.body.collideWorldBounds = true;
      
         // Walking left and right animations
