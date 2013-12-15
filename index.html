@@ -9,10 +9,29 @@
 
         <style>
             body { margin: 0; }
+            #container { width: 480px; margin: 10px auto; }
+            #spoiler { background-color: black; display: inline; }
+            #spoiler span { color: white; }
         </style>
     </head>
     <body>
-        <div id="game"></div>
+        <div id="container">
+            <div id="game"></div>
+            <div>
+                <a target="_blank" href="http://www.ludumdare.com/compo/ludum-dare-28/?action=preview&uid=30146">Ludum Dare 28</a>
+                |
+                <a target="_blank" href="https://github.com/anvoz/tough">Github</a>
+            </div>
+            <div>
+                The game is about an extremely tough guy who is trying to do something.<br>
+                If you can figure it out, you will win the game.
+            </div>
+            <div id="spoiler">
+                <span>Spoiler: </span>
+                You only get one life. Throw it away!<br>
+                Try to kill the main character as fast as possible to get highest score.
+            </div>
+        </div>
 
         <script src="js/phaser.min.js"></script>
         <script src="js/game.js"></script>
