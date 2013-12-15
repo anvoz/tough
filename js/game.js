@@ -5,7 +5,10 @@
         Game = Tough.Game = function() {
             var game = this;
 
-            game.tick = 0;
+            game.ticks = 0;
+
+            game.score = 0;
+            game.scoreText;
 
             game.width = 480;
             game.height = 320;
@@ -62,6 +65,10 @@
 
         var life = game.life = game.add.sprite(360, 5, 'life');
         game.add.text(400, 5, 'x 1', { fontSize: '32px', fill: '#000' });
+
+        var scoreText = game.scoreText = game.add.text(5, 5, 'Score: 0', { fontSize: '32px', fill: '#000' });
+        // TODO: fix this
+        // scoreText.fixedToCamera = true;
     };
 
     Game.prototype.update = function() {
@@ -83,10 +90,16 @@
             // @HACK:
             if (player.y < monster.y - 30) {
                 monster.kill();
+
+                game.score -= 100;
+                game.scoreText.content = 'Score: ' + game.score;
             }
         }, null, this);
         game.physics.collide(player, rockets, function(player, rocket) {
             rocket.body.gravity.y = 12;
+
+            game.score -= 100;
+            game.scoreText.content = 'Score: ' + game.score;
         }, null, this);
         game.physics.collide(monsters, monsters);
 
@@ -95,11 +108,11 @@
 
         player.action();
 
-        game.tick++;
-        if (game.tick % 500 == 0) {
+        game.ticks++;
+        if (game.ticks % 500 == 0) {
             game.createRocket();
         }
-        if (game.tick % 750 == 0) {
+        if (game.ticks % 750 == 0) {
             game.createMonster();
         }
     };
@@ -182,6 +195,9 @@
 
             if (cursors.left.isDown)
             {
+                game.score--;
+                game.scoreText.content = 'Score: ' + game.score;
+
                 // Move to the left
                 player.body.velocity.x = -150;
                 player.animations.play('left');
@@ -193,6 +209,9 @@
             }
             else if (cursors.right.isDown)
             {
+                game.score--;
+                game.scoreText.content = 'Score: ' + game.score;
+
                 // Move to the right
                 player.body.velocity.x = 150;
                 player.animations.play('right');
