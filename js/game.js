@@ -65,7 +65,7 @@
             monster.body.velocity.x = 0;
 
             // @HACK:
-            if (player.position.y < monster.position.y - 30) {
+            if (player.y < monster.y - 30) {
                 monster.kill();
             }
         }, null, this);
@@ -143,6 +143,13 @@
         player.frame = 3;
 
         player.action = function() {
+            if (player.x > game.maxWidth - 40) {
+                player.x = 0;
+            }
+            if (player.y > game.maxHeight - 40) {
+                player.y = 0;
+            }
+
             // Reset the player velocity (movement)
             player.body.velocity.x = 0;
 
