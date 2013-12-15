@@ -296,7 +296,7 @@
             rockets = game.rockets;
         }
 
-        var rocket = rockets.create(game.width, 60, 'rocket');
+        var rocket = rockets.create(game.maxWidth, 60, 'rocket');
         rocket.body.velocity.x = -100;
     };
 })(window);
