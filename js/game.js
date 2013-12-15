@@ -13,6 +13,9 @@
             game.cursors;
             game.platforms;
             game.player;
+
+            game.monsters;
+            game.monsterTimer;
         };
 
     Game.prototype.preload = function() {
@@ -26,6 +29,7 @@
         game.load.image('ledge', 'assets/ledge.png');
 
         game.load.spritesheet('player', 'assets/player.png', 32, 32);
+        game.load.spritesheet('monster', 'assets/monster.png', 32, 32);
     };
 
     Game.prototype.create = function() {
@@ -36,8 +40,15 @@
         // Make the world larger than the actual canvas
         game.world.setBounds(0, 0, game.maxWidth, game.maxHeight);
 
+        // TODO: rewrite these functions
+        // to generate endless map
         game.createSky();
         game.createPlatforms();
+        game.createMonster();
+        game.monsterTimer = setInterval(function() {
+            game.createMonster();
+        }, 20000);
+
         game.createPlayer();
 
         game.camera.follow(game.player);
@@ -46,9 +57,22 @@
     Game.prototype.update = function() {
         var game = this,
             platforms = game.platforms,
-            player = game.player;
+            player = game.player,
+            monsters = game.monsters;
+
+        game.physics.collide(player, monsters, function(player, monster) {
+            monster.frame = 2;
+            monster.body.velocity.x = 0;
+
+            // @HACK:
+            if (player.position.y < monster.position.y - 30) {
+                monster.kill();
+            }
+        }, null, this);
+        game.physics.collide(monsters, monsters);
 
         game.physics.collide(player, platforms);
+        game.physics.collide(monsters, platforms);
 
         player.action();
     };
@@ -156,5 +180,24 @@
                 player.body.velocity.y = -350;
             }
         };
+    };
+
+    Game.prototype.createMonster = function() {
+        var game = this,
+            positions = [ 200, 500, 1150, 1200, 1500, 1900, 2450, 2500 ],
+            monsters;
+
+        if (typeof game.monsters === 'undefined') {
+            // Create monster group
+            monsters = game.monsters = game.add.group()
+        } else {
+            monsters = game.monsters;
+        }
+
+        for (var i = 0; i < positions.length; i++) {
+            var monster = monsters.create(positions[i], 0, 'monster');
+            monster.body.gravity.y = 12;
+            monster.body.velocity.x = -50;
+        }
     };
 })(window);
