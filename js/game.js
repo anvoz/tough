@@ -13,6 +13,7 @@
             game.cursors;
             game.platforms;
             game.player;
+            game.life;
 
             game.monsters;
             game.monsterTimer;
@@ -23,6 +24,8 @@
 
     Game.prototype.preload = function() {
         var game = this;
+
+        game.load.image('life', 'assets/life.png');
 
         game.load.image('sky', 'assets/sky.png');
         game.load.image('cloud1', 'assets/cloud1.png');
@@ -67,16 +70,25 @@
         }, 10000);
 
         game.createPlayer();
-
         game.camera.follow(game.player);
+
+        var life = game.life = game.add.sprite(360, 5, 'life');
+        // TODO: why it doesn't work
+        // life.fixedToCamera = true;
+        game.add.text(400, 5, 'x 1', { fontSize: '32px', fill: '#000' });
     };
 
     Game.prototype.update = function() {
         var game = this,
+            life = game.life,
             platforms = game.platforms,
             player = game.player,
             monsters = game.monsters,
             rockets = game.rockets;
+
+        game.physics.collide(player, life, function() {
+            life.body.gravity.y = 12;
+        }, null, true);
 
         game.physics.collide(player, monsters, function(player, monster) {
             monster.frame = 2;
