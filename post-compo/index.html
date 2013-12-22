@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <title>Tough - Ludum Dare 28</title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+
+        <style>
+            body { margin: 0; }
+            #container { width: 480px; margin: 10px auto; }
+            #spoiler { background-color: black; display: inline; }
+            #spoiler span { color: white; }
+        </style>
+    </head>
+    <body>
+        <div id="container">
+            <div id="game"></div>
+            <div>
+                <a target="_blank" href="http://www.ludumdare.com/compo/ludum-dare-28/?action=preview&uid=30146">Ludum Dare 28</a>
+                |
+                <a target="_blank" href="https://github.com/anvoz/tough">Github</a>
+            </div>
+            <div>
+                The game is about an extremely tough guy who is trying to do something.<br>
+                If you can figure it out, you will win the game.
+            </div>
+            <div id="spoiler">
+                <span>Spoiler: </span>
+                You only get one life. Throw it away!<br>
+                Try to kill the main character as fast as possible to get highest score.
+            </div>
+        </div>
+
+        <script src="js/phaser.min.js"></script>
+        <script src="js/game.js"></script>
+        <script>
+            window.onload = function() {
+                var game = new Phaser.Game(480, 320, Phaser.AUTO, 'game');
+
+                var Boot = function() {};
+                Boot.prototype.preload = function() {
+                    this.load.image('boot', 'assets/boot.png');
+                };
+                Boot.prototype.create = function() {
+                    this.add.sprite(0, 0, 'boot');
+                    this.add.button(0, 0, 'boot', function() {
+                        game.state.start('Game');
+                    });
+                };
+                game.state.add('Boot', Boot);
+
+                game.state.add('Game', Tough.Game);
+
+                game.state.start('Boot');
+            };
+        </script>
+        <script>
+            (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+            (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+            m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+            })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+            ga('create', 'UA-2509540-3', 'anvoz.github.io');
+            ga('send', 'pageview');
+        </script>
+    </body>
+</html>
